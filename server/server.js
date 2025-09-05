@@ -16,9 +16,9 @@ const MONGO_URI = process.env.MONGO_URI;
 
 app.use(
   cors({
-    origin: '*',
+    origin: 'https://lms-website-7mkl.vercel.app',
     methods: ["GET","POST","PUT","DELETE","PATCH","OPTIONS"],
-    allowedHeaders: ["Content-Type", "Authorization"],
+    //allowedHeaders: ["Content-Type", "Authorization"],
   })
 );
 
