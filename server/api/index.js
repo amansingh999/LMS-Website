@@ -48,6 +48,10 @@ app.use((err, req, res, next) => {
   });
 });
 
+app.get("/", (req, res) => {
+  return res.send("Welcome to LMS API");
+})
+
 app.listen(PORT, () => {
   console.log(`Server is now running on port ${PORT}`);
 });
