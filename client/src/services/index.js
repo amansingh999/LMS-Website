@@ -110,6 +110,11 @@ export async function createPaymentService(formData) {
   return data;
 }
 
+export async function createDirectPurchaseService(formData) {
+  const { data } = await axiosInstance.post(`/student/order/direct-purchase`, formData);
+  return data;
+}
+
 export async function captureAndFinalizePaymentService(
   paymentId,
   payerId,

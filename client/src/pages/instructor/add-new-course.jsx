@@ -54,8 +54,7 @@ function AddNewCoursePage() {
     for (const item of courseCurriculumFormData) {
       if (
         isEmpty(item.title) ||
-        isEmpty(item.videoUrl) ||
-        isEmpty(item.public_id)
+        isEmpty(item.videoUrl)
       ) {
         return false;
       }
@@ -141,7 +140,7 @@ function AddNewCoursePage() {
             Back
           </Button>
           <Button
-            // disabled={!validateFormData()}
+            disabled={!validateFormData()}
             className='text-sm tracking-wider font-bold px-8'
             onClick={handleCreateCourse}
           >

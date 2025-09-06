@@ -95,6 +95,13 @@ const checkCoursePurchaseInfo = async (req, res) => {
       userId: studentId,
     });
 
+    if (!studentCourses || !studentCourses.courses) {
+      return res.status(200).json({
+        success: true,
+        data: false, // Student hasn't purchased this course
+      });
+    }
+
     const ifStudentAlreadyBoughtCurrentCourse =
       studentCourses.courses.findIndex((item) => item.courseId === id) > -1;
     res.status(200).json({

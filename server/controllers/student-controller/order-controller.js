@@ -3,6 +3,104 @@ const Order = require("../../models/Order");
 const Course = require("../../models/Course");
 const StudentCourses = require("../../models/StudentCourses");
 
+const directPurchase = async (req, res) => {
+  try {
+    const {
+      userId,
+      userName,
+      userEmail,
+      instructorId,
+      instructorName,
+      courseImage,
+      courseTitle,
+      courseId,
+      coursePricing,
+    } = req.body;
+
+    // 1. Create a new order directly
+    const newOrder = new Order({
+      userId,
+      userName,
+      userEmail,
+      orderStatus: "confirmed",
+      paymentMethod: "none",
+      paymentStatus: "paid",
+      orderDate: new Date(),
+      paymentId: "direct-payment",
+      payerId: "direct-purchase",
+      instructorId,
+      instructorName,
+      courseImage,
+      courseTitle,
+      courseId,
+      coursePricing,
+    });
+
+    await newOrder.save();
+
+    // 2. Add course to StudentCourses model
+    let studentCourses = await StudentCourses.findOne({ userId });
+
+    if (studentCourses) {
+      const alreadyPurchased = studentCourses.courses.find(
+        (item) => item.courseId === courseId
+      );
+
+      if (!alreadyPurchased) {
+        studentCourses.courses.push({
+          courseId,
+          title: courseTitle,
+          instructorId,
+          instructorName,
+          dateOfPurchase: new Date(),
+          courseImage,
+        });
+        await studentCourses.save();
+      }
+    } else {
+      studentCourses = new StudentCourses({
+        userId,
+        courses: [
+          {
+            courseId,
+            title: courseTitle,
+            instructorId,
+            instructorName,
+            dateOfPurchase: new Date(),
+            courseImage,
+          },
+        ],
+      });
+      await studentCourses.save();
+    }
+
+    // 3. Update course schema to add student info
+    await Course.findByIdAndUpdate(courseId, {
+      $addToSet: {
+        students: {
+          studentId: userId,
+          studentName: userName,
+          studentEmail: userEmail,
+          paidAmount: coursePricing,
+        },
+      },
+    });
+
+    // 4. Return success response
+    res.status(201).json({
+      success: true,
+      message: "Course purchased successfully",
+      data: newOrder,
+    });
+  } catch (err) {
+    console.error("Direct Purchase Error:", err);
+    res.status(500).json({
+      success: false,
+      message: "Some error occurred while purchasing the course",
+    });
+  }
+};
+
 const createOrder = async (req, res) => {
   try {
     const {
@@ -184,4 +282,4 @@ const capturePaymentAndFinalizeOrder = async (req, res) => {
   }
 };
 
-module.exports = { createOrder, capturePaymentAndFinalizeOrder };
+module.exports = { createOrder, capturePaymentAndFinalizeOrder, directPurchase };

@@ -126,7 +126,7 @@ function StudentViewCourseProgressPage() {
         <div className="flex items-center space-x-4">
           <Button
             onClick={() => navigate("/student-courses")}
-            className="text-black"
+            // className="text-black"
             variant="ghost"
             size="sm"
           >
