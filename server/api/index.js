@@ -16,12 +16,12 @@ const MONGO_URI = process.env.MONGO_URI;
 
 app.use(
   cors({
-    origin: process.env.CLIENT_URL,
+    origin: process.env.CLIENT_URL || "*",
     methods: ["GET","POST","PUT","DELETE","PATCH","OPTIONS"],
     allowedHeaders: ["Content-Type", "Authorization"],
   })
 );
-
+app.options("*", cors());
 app.use(express.json());
 
 //database connection
@@ -54,3 +54,5 @@ app.get("/", (req, res) => {
 app.listen(PORT, () => {
   console.log(`Server is now running on port ${PORT}`);
 });
+
+module.exports = app;
